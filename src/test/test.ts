@@ -297,19 +297,23 @@ async function test() {
 
     document.getElementsByTagName('iframe')[0].src = 'popup.html';
     document.getElementsByTagName('iframe')[0].onload = () => {
-      document.getElementsByTagName('iframe')[0].contentWindow.addEventListener(
-          'unhandledrejection', event => {
-            const rejectionEvent = event as PromiseRejectionEvent;
-            testRes[testCaseIndex] = {
-              pass: false,
-              error: rejectionEvent.reason
-            };
-          });
+      const iframe = document.getElementsByTagName('iframe')[0];
+      if (iframe.contentWindow) {
+        iframe.contentWindow.addEventListener(
+            'unhandledrejection', event => {
+              const rejectionEvent = event as PromiseRejectionEvent;
+              testRes[testCaseIndex] = {
+                pass: false,
+                error: String(rejectionEvent.reason)
+              };
+            });
 
-      document.getElementsByTagName('iframe')[0].contentWindow.onerror =
-          error => {
-            testRes[testCaseIndex] = {pass: false, error};
-          };
+        iframe.contentWindow.onerror =
+            error => {
+              testRes[testCaseIndex] = {pass: false, error: String(error)};
+              return true;
+            };
+      }
     };
   }
 

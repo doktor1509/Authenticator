@@ -117,6 +117,45 @@ async function menu(_ui: UI) {
               return;
             });
         return;
+      },
+      toggleDarkMode: () => {
+        const isDarkMode = localStorage.darkMode === 'true';
+        localStorage.darkMode = (!isDarkMode).toString();
+        document.body.classList.toggle('dark-mode');
+        return;
+      },
+      updateSearch: () => {
+        // Search filtering is handled by Vue computed property
+        return;
+      },
+      isMatchedEntry: (entry: OTPEntry) => {
+        const query = _ui.instance.searchQuery || '';
+        if (!query) return true;
+        const searchLower = query.toLowerCase();
+        return entry.issuer.toLowerCase().includes(searchLower) ||
+               entry.account.toLowerCase().includes(searchLower);
+      },
+      copyCode: (entry: OTPEntry) => {
+        if (entry.code && entry.code !== '&bull;&bull;&bull;&bull;&bull;&bull;') {
+          const clipboard = document.getElementById('codeClipboard') as HTMLInputElement;
+          if (clipboard) {
+            clipboard.value = entry.code;
+            clipboard.select();
+            document.execCommand('copy');
+            _ui.instance.showNotification('Code copied!');
+          }
+        }
+        return;
+      },
+      showNotification: (message: string) => {
+        _ui.instance.notification = message;
+        _ui.instance.class.notificationFadein = true;
+        _ui.instance.class.notificationFadeout = false;
+        setTimeout(() => {
+          _ui.instance.class.notificationFadein = false;
+          _ui.instance.class.notificationFadeout = true;
+        }, 2000);
+        return;
       }
     }
   };

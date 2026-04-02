@@ -3,6 +3,12 @@
 /// <reference path="./ui.ts" />
 
 async function className(_ui: UI) {
+  // Load dark mode preference
+  const isDarkMode = localStorage.darkMode === 'true';
+  if (isDarkMode) {
+    document.body.classList.add('dark-mode');
+  }
+
   const ui: UIConfig = {
     data: {
       class: {
@@ -17,7 +23,9 @@ async function className(_ui: UI) {
         notificationFadein: false,
         notificationFadeout: false,
         hotpDiabled: false
-      }
+      },
+      searchQuery: '',
+      notification: ''
     }
   };
 
